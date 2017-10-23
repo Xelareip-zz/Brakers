@@ -18,6 +18,15 @@ public enum BRAKE_TYPE
 
 public class BrakerPlayer : MonoBehaviour
 {
+	private static BrakerPlayer instance;
+	public static BrakerPlayer Instance
+	{
+		get
+		{
+			return instance;
+		}
+	}
+
 	public GameObject endGame;
 	public Text speedText;
 	public Rigidbody2D rig;
@@ -26,8 +35,7 @@ public class BrakerPlayer : MonoBehaviour
 	public BRAKE_TYPE brakeType = BRAKE_TYPE.PROPORTIONNAL;
 	public float boostDelay;
 	public float boostStrength;
-
-	public Vector2 maxVelocity;
+	
 	public float minSpeed;
 	public float maxSpeed;
 	public float accelerationSpeed;
@@ -38,6 +46,11 @@ public class BrakerPlayer : MonoBehaviour
 	public float currentSpeed;
 
 	public bool speedScores;
+
+	void Awake()
+	{
+		instance = this;
+	}
 
 	void Start()
 	{
@@ -120,7 +133,7 @@ public class BrakerPlayer : MonoBehaviour
 			}
 		}
 
-		currentSpeed = Mathf.Clamp(currentSpeed + localAcceleration * Time.deltaTime, maxVelocity.x, maxVelocity.y);
+		currentSpeed = Mathf.Clamp(currentSpeed + localAcceleration * Time.deltaTime, minSpeed, maxSpeed);
 
 		Camera.main.orthographicSize = Parameters.Instance.minCamSize + currentSpeed * Parameters.Instance.camScale;
 

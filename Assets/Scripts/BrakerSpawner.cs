@@ -9,6 +9,7 @@ public class BrakerSpawner : MonoBehaviour
 	public List<GameObject> platforms = new List<GameObject>();
 	public int maxCount;
 	public float distance;
+	public float distanceScale;
 	public Vector2 boundaries;
 
 	public bool canScore;
@@ -19,6 +20,7 @@ public class BrakerSpawner : MonoBehaviour
 
 		maxCount = Parameters.Instance.maxPlatformsCount;
 		distance = Parameters.Instance.platformDistance;
+		distanceScale = Parameters.Instance.platformDistanceScale;
 	}
 
 	void Update()
@@ -51,11 +53,11 @@ public class BrakerSpawner : MonoBehaviour
 			GameObject newPlat = null;
 			if (platforms.Count != 0)
 			{
-				newPlat = Instantiate<GameObject>(platformModel, new Vector3(Random.Range(boundaries.x, boundaries.y), platforms[platforms.Count - 1].transform.position.y + distance, player.transform.position.z), Quaternion.identity);
+				newPlat = Instantiate<GameObject>(platformModel, new Vector3(Random.Range(boundaries.x, boundaries.y), platforms[platforms.Count - 1].transform.position.y + distance + BrakerPlayer.Instance.currentSpeed * distanceScale, player.transform.position.z), Quaternion.identity);
 			}
 			else
 			{
-				newPlat = Instantiate<GameObject>(platformModel, new Vector3(Random.Range(boundaries.x, boundaries.y), player.transform.position.y + distance, player.transform.position.z), Quaternion.identity);
+				newPlat = Instantiate<GameObject>(platformModel, new Vector3(Random.Range(boundaries.x, boundaries.y), player.transform.position.y + distance + BrakerPlayer.Instance.currentSpeed * distanceScale, player.transform.position.z), Quaternion.identity);
 			}
 			platforms.Add(newPlat);
 		}

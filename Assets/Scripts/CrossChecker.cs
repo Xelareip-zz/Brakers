@@ -4,15 +4,24 @@ using UnityEngine;
 
 public class CrossChecker : MonoBehaviour
 {
-	public Transform target;
+	public float checkerSize;
+	public Material visualMaterial;
+	public Transform visualObject;
 	public float maxOffset;
 
 	void Update()
 	{
-		if (transform.position.y - target.transform.position.y < -maxOffset / 2.0f)
+		while (visualObject.transform.position.y - Camera.main.transform.position.y < -maxOffset)
 		{
-			transform.position = new Vector3(0.0f, target.transform.position.y + target.transform.position.y % maxOffset, transform.position.z);
+			visualObject.transform.position += Vector3.up * maxOffset;
 		}
+
+		float orthoSize = (Camera.main.orthographicSize + maxOffset) * 2f;
+
+		visualObject.transform.localScale = new Vector3(orthoSize * Camera.main.aspect, orthoSize, 1);
+		orthoSize /= 4.0f;
+		visualMaterial.SetFloat("repeatsX", orthoSize * Camera.main.aspect	 / checkerSize);
+		visualMaterial.SetFloat("repeatsY", orthoSize						 / checkerSize);
 	}
 
 }

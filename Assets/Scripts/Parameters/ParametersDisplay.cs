@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PrefabsPaths
@@ -230,7 +228,7 @@ public class EnumParameterEditor : ParameterEditor
 		enumType = type;
 		GameObject model = Resources.Load<GameObject>(PrefabsPaths.ENUM_FIELD_PREFAB_PATH);
 		editor = GameObject.Instantiate<GameObject>(model, ParameterEditor.holder.transform);
-		
+
 		inputField = editor.GetComponentInChildren<Dropdown>();
 		List<string> names = new List<string>();
 		names.AddRange(Enum.GetNames(enumType));
@@ -262,84 +260,34 @@ public class EnumParameterEditor : ParameterEditor
 	}
 }
 
-[Serializable]
-public class Parameters
+public abstract class ParameterBase
 {
-	private static string SAVE_FILE = Application.persistentDataPath + "/params.json";
-
-	private static Parameters instance;
-	public static Parameters Instance
-	{
-		get
-		{
-			if (instance == null)
-			{
-				instance = new Parameters();
-				if (File.Exists(SAVE_FILE))
-				{
-					string content = File.ReadAllText(SAVE_FILE);
-					JsonUtility.FromJsonOverwrite(content, instance);
-	            }
-			}
-			return instance;
-		}
-	}
-
-	[Parameter("Left input")]
-	public INPUT_TYPE leftInput = INPUT_TYPE.BRAKE;
-	[Parameter("Right input")]
-	public INPUT_TYPE rightInput = INPUT_TYPE.BRAKE;
-	[Parameter]
-	public BRAKE_TYPE brakeType = BRAKE_TYPE.PROPORTIONNAL;
-
-	[Parameter]
-	public float boostDelay = 3;
-	[Parameter]
-	public float boostStrength = 5;
-	
-	[Parameter]
-	public float minSpeed = 0;
-	[Parameter]
-	public float maxSpeed = float.MaxValue;
-	[Parameter]
-	public float accelerationSpeed = 3;
-	[Parameter]
-	public float brakeSpeed = 5;
-
-	[Parameter]
-	public bool speedScores = true;
-
-	[Parameter]
-	public bool platformScores = false;
-	[Parameter]
-	public int maxPlatformsCount = 6;
-	[Parameter]
-	public float platformDistance = 5;
-
-	[Parameter("Cam size min")]
-	public float minCamSize = 10;
-	[Parameter("Cam scale")]
-	public float camScale = 1;
-
-	private Parameters()
-	{
-	}
-
-	public void Save()
-	{
-		File.WriteAllText(SAVE_FILE, JsonUtility.ToJson(this));
-	}
+	public abstract void Save();
 }
 
-public class ParametersSingleton : MonoBehaviour
+public class ParametersDisplay : MonoBehaviour
 {
 	public GUIStyle style;
 
+	public string parameterClassName = "Parameters";
+
 	[NonSerialized]
-	public Parameters target;
+	public ParameterBase target;
 	public GameObject uiHolder;
 	public bool adaptParentHeight;
 	public Dictionary<FieldInfo, ParameterEditor> parameterEditors = new Dictionary<FieldInfo, ParameterEditor>();
+
+	private void GetTarget()
+	{
+		foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
+		{
+			if (type.Name == parameterClassName)
+			{
+				PropertyInfo instanceMember = type.GetProperty("Instance");
+				target = instanceMember.GetValue(null, null) as ParameterBase;
+			}
+		}
+    }
 
 	void Start()
 	{
@@ -347,7 +295,7 @@ public class ParametersSingleton : MonoBehaviour
 		{
 			ParameterEditor.holder = uiHolder;
 		}
-		target = Parameters.Instance;
+		GetTarget();
 		FieldInfo[] infos = typeof(Parameters).GetFields();
 		foreach (FieldInfo info in infos)
 		{
@@ -363,13 +311,11 @@ public class ParametersSingleton : MonoBehaviour
 						if (parameterAttr.GetName() != "")
 						{
 							name = parameterAttr.GetName();
-                        }
+						}
 						else
 						{
 							name = info.Name;
 						}
-						Debug.Log("Name : " + name);
-						Debug.Log("Type : " + info.FieldType.ToString());
 						bool found = false;
 						switch (info.FieldType.ToString())
 						{
@@ -395,7 +341,7 @@ public class ParametersSingleton : MonoBehaviour
 							parameterEditors.Add(info, new EnumParameterEditor(name, info.FieldType, info.GetValue(target).ToString()));
 							found = true;
 						}
-                    }
+					}
 					break;
 				}
 			}
@@ -411,7 +357,7 @@ public class ParametersSingleton : MonoBehaviour
 
 			kvp.Value.editorTransform.anchorMax = Vector2.one;
 			kvp.Value.editorTransform.anchorMin = Vector2.up;
-            kvp.Value.editorTransform.offsetMax = new Vector2(0, height);
+			kvp.Value.editorTransform.offsetMax = new Vector2(0, height);
 			height -= heightDiff;
 			kvp.Value.editorTransform.offsetMin = new Vector2(0, height);
 			height -= 5;
@@ -430,82 +376,4 @@ public class ParametersSingleton : MonoBehaviour
 	{
 		target.Save();
 	}
-	/*
-	private Vector2 scrollPos;
-	public int width;
-	public int height;
-	void OnGUI()
-	{
-		return;
-		if (SceneManager.GetActiveScene().name != "MainMenu")
-		{
-			return;
-		}
-
-		GUILayoutOption[] options = new GUILayoutOption[] { GUILayout.MinWidth(width), GUILayout.MinHeight(height) };
-		
-		scrollPos = GUILayout.BeginScrollView(scrollPos);
-		GUILayout.Space(50);
-		GUILayout.BeginHorizontal(style);
-		GUILayout.Label("Left input", style);
-		if (GUILayout.Button("Brake", options))
-		{
-			Parameters.Instance.leftInput = INPUT_TYPE.BRAKE;
-		}
-		if (GUILayout.Button("Boost", options))
-		{
-			Parameters.Instance.leftInput = INPUT_TYPE.BOOST;
-		}
-		GUILayout.Label(Parameters.Instance.leftInput.ToString(), style);
-		GUILayout.EndHorizontal();
-
-		GUILayout.BeginHorizontal();
-		GUILayout.Label("Right input", style);
-		if (GUILayout.Button("Brake", options))
-		{
-			Parameters.Instance.rightInput = INPUT_TYPE.BRAKE;
-		}
-		if (GUILayout.Button("Boost", options))
-		{
-			Parameters.Instance.rightInput = INPUT_TYPE.BOOST;
-		}
-		GUILayout.Label(Parameters.Instance.rightInput.ToString(), style);
-		GUILayout.EndHorizontal();
-		GUILayout.Label("Boost delay", style);
-		float.TryParse(GUILayout.TextField(Parameters.Instance.boostDelay.ToString(), options), out Parameters.Instance.boostDelay);
-		GUILayout.Label("Boost Strength", style);
-		float.TryParse(GUILayout.TextField(Parameters.Instance.boostStrength.ToString(), options), out Parameters.Instance.boostStrength);
-		GUILayout.Label("Negative speed", style);
-		float.TryParse(GUILayout.TextField(Parameters.Instance.maxVelocity.x.ToString(), options), out Parameters.Instance.maxVelocity.x);
-		GUILayout.Label("Max speed", style);
-		float.TryParse(GUILayout.TextField(Parameters.Instance.maxVelocity.y.ToString(), options), out Parameters.Instance.maxVelocity.y);
-		GUILayout.Label("Acceleration", style);
-		float.TryParse(GUILayout.TextField(Parameters.Instance.accelerationSpeed.ToString(), options), out Parameters.Instance.accelerationSpeed);
-		GUILayout.Label("Brake", style);
-		float.TryParse(GUILayout.TextField(Parameters.Instance.brakeSpeed.ToString(), options), out Parameters.Instance.brakeSpeed);
-
-		GUILayout.Space(25);
-		Parameters.Instance.speedScores = GUILayout.Toggle(Parameters.Instance.speedScores, "Speed as score", options);
-		Parameters.Instance.platformScores = GUILayout.Toggle(Parameters.Instance.platformScores, "Platforms as score", options);
-		GUILayout.Label("Max platforms", style);
-		int.TryParse(GUILayout.TextField(Parameters.Instance.maxPlatformsCount.ToString(), options), out Parameters.Instance.maxPlatformsCount);
-		GUILayout.Label("Platform distance", style);
-		float.TryParse(GUILayout.TextField(Parameters.Instance.platformDistance.ToString(), options), out Parameters.Instance.platformDistance);
-
-		if (GUILayout.Button("Start", options))
-		{
-			SceneManager.LoadScene("MainScene");
-		}
-
-		if (GUILayout.Button("Save", options))
-		{
-			Parameters.Instance.Save();
-		}
-
-		GUILayout.EndScrollView();
-	}
-
-	void OnDestroy()
-	{
-	}*/
 }

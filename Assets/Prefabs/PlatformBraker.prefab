@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 212504928131973178}
   - component: {fileID: 61337264005605656}
   - component: {fileID: 114474708487546678}
+  - component: {fileID: 114254115793482442}
   m_Layer: 0
   m_Name: PlatformBraker
   m_TagString: Wall
@@ -37,7 +38,7 @@ Transform:
   m_GameObject: {fileID: 1782964711776202}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2, y: 4, z: 0}
-  m_LocalScale: {x: 3, y: 0.1, z: 1}
+  m_LocalScale: {x: 3, y: 0.3, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -67,6 +68,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.5, y: 0.5}
   m_EdgeRadius: 0
+--- !u!114 &114254115793482442
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1782964711776202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27a86d40ecf0c4d4ea42925c63d2f16f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialHeight: 0
 --- !u!114 &114474708487546678
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -114,7 +127,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 75c91baa2c671a34b8a869602090a58d, type: 3}
-  m_Color: {r: 1, g: 0.15294118, b: 0.15294118, a: 1}
+  m_Color: {r: 0.834, g: 0.4637243, b: 0.12755293, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
