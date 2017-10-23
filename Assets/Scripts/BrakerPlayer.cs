@@ -122,6 +122,8 @@ public class BrakerPlayer : MonoBehaviour
 
 		currentSpeed = Mathf.Clamp(currentSpeed + localAcceleration * Time.deltaTime, maxVelocity.x, maxVelocity.y);
 
+		Camera.main.orthographicSize = Parameters.Instance.minCamSize + currentSpeed * Parameters.Instance.camScale;
+
 		speedText.text = string.Format("{0:0.00}", currentSpeed);
 
 		if (speedScores)

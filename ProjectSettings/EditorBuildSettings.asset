@@ -12,5 +12,5 @@ EditorBuildSettings:
     path: Assets/Scenes/OriginalScene.unity
     guid: 74fa875eed92bda44a20976c51cbb207
   - enabled: 1
-    path: Assets/Scenes/UnlimitedSpeedScene.unity
+    path: Assets/Scenes/MainScene.unity
     guid: 4bee03a6d5721214aa08eb0af4a27891

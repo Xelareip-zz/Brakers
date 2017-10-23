@@ -316,6 +316,11 @@ public class Parameters
 	[Parameter]
 	public float platformDistance = 5;
 
+	[Parameter("Cam size min")]
+	public float minCamSize = 10;
+	[Parameter("Cam scale")]
+	public float camScale = 1;
+
 	private Parameters()
 	{
 	}
