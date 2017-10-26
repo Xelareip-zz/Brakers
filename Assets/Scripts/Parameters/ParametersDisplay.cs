@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PrefabsPaths
@@ -262,7 +263,11 @@ public class EnumParameterEditor : ParameterEditor
 
 public abstract class ParameterBase
 {
+	public abstract void Load();
 	public abstract void Save();
+	public abstract void Reset();
+
+	public abstract void DeleteInstance();
 }
 
 public class ParametersDisplay : MonoBehaviour
@@ -350,6 +355,10 @@ public class ParametersDisplay : MonoBehaviour
 
 	void Update()
 	{
+		if (target == null)
+		{
+			return;
+		}
 		float height = 0;
 		foreach (KeyValuePair<FieldInfo, ParameterEditor> kvp in parameterEditors)
 		{
@@ -374,6 +383,17 @@ public class ParametersDisplay : MonoBehaviour
 
 	void OnDestroy()
 	{
-		target.Save();
+		if (target != null)
+		{
+			target.Save();
+		}
+	}
+
+	public void ResetAndReload()
+	{
+		target.Reset();
+		target.DeleteInstance();
+		target = null;
+		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 	}
 }

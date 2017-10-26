@@ -63,6 +63,7 @@ public class BrakerPlayer : MonoBehaviour
         accelerationSpeed = Parameters.Instance.accelerationSpeed;
 		brakeSpeed = Parameters.Instance.brakeSpeed;
 		speedScores = Parameters.Instance.speedScores;
+		brakeType = Parameters.Instance.brakeType;
 	}
 
 	void Update ()

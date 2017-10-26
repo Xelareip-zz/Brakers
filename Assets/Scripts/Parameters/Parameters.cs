@@ -21,11 +21,7 @@ public class Parameters : ParameterBase
 			if (instance == null)
 			{
 				instance = new Parameters();
-				if (File.Exists(SAVE_FILE))
-				{
-					string content = File.ReadAllText(SAVE_FILE);
-					JsonUtility.FromJsonOverwrite(content, instance);
-	            }
+				instance.Load();
 			}
 			return instance;
 		}
@@ -46,11 +42,11 @@ public class Parameters : ParameterBase
 	[Parameter]
 	public float minSpeed = 0;
 	[Parameter]
-	public float maxSpeed = float.MaxValue;
+	public float maxSpeed = 50;
 	[Parameter]
 	public float accelerationSpeed = 3;
 	[Parameter]
-	public float brakeSpeed = 5;
+	public float brakeSpeed = 1.5f;
 
 	[Parameter]
 	public bool speedScores = true;
@@ -69,14 +65,33 @@ public class Parameters : ParameterBase
 	[Parameter("Near miss distance")]
 	public float nearMissDistance = 0;
 	[Parameter("Platform distance scale")]
-	public float platformDistanceScale = 0.0f;
+	public float platformDistanceScale = 1.0f;
 
 	private Parameters()
 	{
 	}
 
+	public override void Load()
+	{
+		if (File.Exists(SAVE_FILE))
+		{
+			string content = File.ReadAllText(SAVE_FILE);
+			JsonUtility.FromJsonOverwrite(content, this);
+		}
+	}
+
 	public override void Save()
 	{
 		File.WriteAllText(SAVE_FILE, JsonUtility.ToJson(this));
+	}
+
+	public override void Reset()
+	{
+		File.Delete(SAVE_FILE);
+	}
+
+	public override void DeleteInstance()
+	{
+		instance = null;
 	}
 }
