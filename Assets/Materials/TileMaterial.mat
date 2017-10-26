@@ -71,9 +71,9 @@ Material:
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
-    - repeatsX: 2.8662567
-    - repeatsY: 5.0955677
+    - repeatsX: 3.6164765
+    - repeatsY: 6.4292917
     m_Colors:
-    - _Color: {r: 0.459, g: 0.459, b: 0.459, a: 1}
+    - _Color: {r: 0.122, g: 0.122, b: 0.122, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Test: {r: 0, g: 0, b: 0, a: 0}
